@@ -781,6 +781,7 @@ function showProductionAlone(){
 			var text1 = document.createTextNode("Titulo:");
 			title1.appendChild(text1);
 			var name = document.createElement("p");
+			name.setAttribute("id","prodN");
 			var textN = document.createTextNode(production.value.title);
 			name.appendChild(textN);
 
@@ -805,13 +806,8 @@ function showProductionAlone(){
 			var text4 = document.createTextNode("Sinopsis:");
 			title4.appendChild(text4);
 			var synopsis = document.createElement("p");
-			var textP = document.createTextNode(production.value.synopsis);
-			synopsis.appendChild(textP);
-
-			var title5 = document.createElement("h6");
-			title5.setAttribute("class", "mt-2")
-			var text5 = document.createTextNode("Director:");
-			title5.appendChild(text5);
+			var textS = document.createTextNode(production.value.synopsis);
+			synopsis.appendChild(textS);
 
 			contentP.appendChild(content);
 			contentP.appendChild(info);
@@ -824,6 +820,67 @@ function showProductionAlone(){
 			info.appendChild(publication);
 			info.appendChild(title4);
 			info.appendChild(synopsis);
+
+			if(production.value instanceof Movie){
+
+				var titleR = document.createElement("h6");
+				titleR.setAttribute("class", "mt-2")
+				var textR = document.createTextNode("Recurso:");
+				titleR.appendChild(textR);
+
+				var br = document.createElement ("button");
+				br.setAttribute("class","btn btn-default btn-sm mb-1");
+				br.setAttribute("id","buttonP");
+				br.setAttribute("type","button");
+				br.setAttribute("value",production.value.title);
+				var textBr = document.createTextNode("Ver");
+				br.appendChild(textBr);
+
+				info.appendChild(titleR);
+				info.appendChild(br);
+
+				br.addEventListener("click", openWindows);
+
+				//BOTON PRUEBA CERRAR
+				var brp = document.createElement ("button");
+				brp.setAttribute("class","btn btn-default btn-sm mb-1");
+				brp.setAttribute("id","buttonP");
+				brp.setAttribute("type","button");
+				brp.setAttribute("value",production.value.title);
+				var textBp = document.createTextNode("Prueba");
+				brp.appendChild(textBp);
+
+				info.appendChild(brp);
+
+				brp.addEventListener("click", closeWindows);
+
+			}else{
+
+				var titleR = document.createElement("h6");
+				titleR.setAttribute("class", "mt-2")
+				var textR = document.createTextNode("Temporadas:");
+				titleR.appendChild(textR);
+
+				var br = document.createElement ("button");
+				br.setAttribute("class","btn btn-default btn-sm mb-1");
+				br.setAttribute("id","buttonP");
+				br.setAttribute("type","button");
+				br.setAttribute("value",production.value.title);
+				var textBr = document.createTextNode("Ver");
+				br.appendChild(textBr);
+
+				info.appendChild(titleR);
+				info.appendChild(br);
+
+				br.addEventListener("click", openWindows);
+
+			}
+
+			var title5 = document.createElement("h6");
+			title5.setAttribute("class", "mt-2")
+			var text5 = document.createTextNode("Director:");
+			title5.appendChild(text5);
+
 			info.appendChild(title5);
 
 			var prod =document.createElement("div");
@@ -934,6 +991,162 @@ function showProductionAlone(){
 	}
 	
 }
+
+var arrayWindows = new Array();
+
+function openWindows() {
+	if (window.name.open){
+
+		window.name.focus();
+
+	} else {
+
+	var newWindow = window.open("Window.html",this.value,"toolbar=yes,scrollbars=yes,resizable=yes,top=100,left=250,width=500,height=500");
+	arrayWindows.push(newWindow);
+
+	}
+}
+
+function closeWindows() {
+	
+	var index = 0;
+	console.log("entra al close");
+	if (!arrayWindows.length !== 0) {
+		console.log("entra al if");
+		while ( index < arrayWindows.length) {
+			console.log("entra al while");
+			arrayWindows[index].close();
+			arrayWindows.splice(index, 1);
+		}
+	}
+}
+
+function showResource() {
+
+	var prod = document.getElementById("prodN").innerHTML;
+
+	for ( let index = 0 ; index < arrayWindows.length ; index++){
+		if (arrayWindows[index].name === prod) {
+			var windowS = arrayWindows[index];
+		}
+	}
+
+	var contentP = windowS.document.getElementById("data");
+
+	var search = false;
+	var video = VideoSystem.getInstance();
+	var productions = video.productions;
+	var production = productions.next();
+	while ((production.done !== true) && (!search)){
+
+		if (production.value.title == prod) {
+
+			var content = document.createElement("div");
+			content.setAttribute("class", "d-flex");
+			content.setAttribute("class","col-3");
+			var image = document.createElement("img");
+
+			image.setAttribute("src","img/"+production.value.title+".jpg");
+			image.setAttribute("alt",production.value.title);
+			image.setAttribute("style","max-heigth:300px;");
+			image.setAttribute("class", "border border-info");
+
+			var info = document.createElement("div");
+			info.setAttribute("class", "ml-3");
+			info.setAttribute("class","col-9");
+
+			var title1 = document.createElement("h6");
+			var text1 = document.createTextNode("Titulo:");
+			title1.appendChild(text1);
+			var name = document.createElement("p");
+			var textN = document.createTextNode(production.value.title);
+			name.appendChild(textN);
+
+			var title2 = document.createElement("h6");
+			var text2 = document.createTextNode("Nacionalidad:");
+			title2.appendChild(text2);
+			var nationality = document.createElement("p");
+			var textNa = document.createTextNode(production.value.nationality);
+			nationality.appendChild(textNa);
+
+			
+			var title3 = document.createElement("h6");
+			title3.setAttribute("class", "mt-2")
+			var text3 = document.createTextNode("Publicacion:");
+			title3.appendChild(text3);
+			var publication = document.createElement("p");
+			var textP = document.createTextNode(production.value.publication.toLocaleDateString());
+			publication.appendChild(textP);
+
+			var title4 = document.createElement("h6");
+			title4.setAttribute("class", "mt-2")
+			var text4 = document.createTextNode("Sinopsis:");
+			title4.appendChild(text4);
+			var synopsis = document.createElement("p");
+			var textS = document.createTextNode(production.value.synopsis);
+			synopsis.appendChild(textS);
+
+			contentP.appendChild(content);
+			contentP.appendChild(info);
+			content.appendChild(image);
+			info.appendChild(title1);
+			info.appendChild(name);
+			info.appendChild(title2);
+			info.appendChild(textNa);
+			info.appendChild(title3);
+			info.appendChild(publication);
+			info.appendChild(title4);
+			info.appendChild(synopsis);
+
+			if(production.value instanceof Movie){
+
+				var titleR = document.createElement("h6");
+				titleR.setAttribute("class", "mt-2")
+				var textR = document.createTextNode("Recurso:");
+				titleR.appendChild(textR);
+				var resource = document.createElement("p");
+				var textR2 = document.createTextNode(production.value.resource);
+				resource.appendChild(textR2);
+
+				var titleL = document.createElement("h6");
+				titleL.setAttribute("class", "mt-2")
+				var textL = document.createTextNode("Localizaciones:");
+				titleL.appendChild(textL);
+				var locations = document.createElement("p");
+				var textL2 = document.createTextNode(production.value.locations);
+				locations.appendChild(textL2);
+
+				info.appendChild(titleR);
+				info.appendChild(resource);
+				info.appendChild(titleL);
+				info.appendChild(locations);
+
+			}
+
+			if(production.value instanceof Serie) {
+
+				var titleS = document.createElement("h6");
+				titleS.setAttribute("class", "mt-2")
+				var textS = document.createTextNode("Temporadas:");
+				titleS.appendChild(textS);
+				var seasons = document.createElement("p");
+				var textS = document.createTextNode(production.value.seasons);
+				seasons.appendChild(textS);
+
+				info.appendChild(titleS);
+				info.appendChild(seasons);
+
+			}
+
+			search = true;
+
+		}
+		production = productions.next();
+	}
+
+}
+
+
 
 //Funcion que invoca todas las funciones necesarias.
 function init(){
