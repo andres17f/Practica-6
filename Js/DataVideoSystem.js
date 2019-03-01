@@ -191,15 +191,163 @@ function initPopulate(){
 	}
 }
 
-//Ahora Crearemos una funcion que nos mostrara la pagina de inicio
-function showHomePage(){
+//Funcion que mostrara el menu navegable
+function menuPopulate(){
 
-	menuPopulate();
+	var menu = document.getElementById("menu");
+
+	while (menu.firstChild) {
+		menu.removeChild(menu.firstChild);
+		}
+
+	var array = ["Inicio","Categorias","Producciones","Actores","Directores"];
+	var arrayHref = [showHomePage,showCategories,showProductions,showActors,ShowDirectors];
+
+	var ul = document.createElement("ul");
+	ul.setAttribute("class","nav nav-tabs");
+
+	for (var cont=0 ; cont< 5; cont++) {
+		
+		var li = document.createElement("li");
+		li.setAttribute("class","nav-item btn");
+		var a = document.createElement("a");
+		a.setAttribute("class","nav-link");
+		li.addEventListener("click",arrayHref[cont]);
+		var text = document.createTextNode(array[cont]);
+		a.appendChild(text);
+
+		menu.appendChild(ul);
+		ul.appendChild(li);
+		li.appendChild(a);
+	}
+
+}
+
+//funcion que nos mostrara la pagina de incio 
+function showHomePage() {
+	
+	var show = document.getElementById("Nombre");
+	show.innerHTML = "Ustream Tv";
+
+	var contentP = document.getElementById("principal");
+	contentP.setAttribute("class","d-flex");
+
+	while (contentP.firstChild) {
+		contentP.removeChild(contentP.firstChild);
+		}
+
+	var divList = document.createElement("ul");
+	divList.setAttribute("class","list-group mt-5 mr-5");
+	divList.setAttribute("style","width:20%");
+
+	contentP.appendChild(divList);
+
+	var video = VideoSystem.getInstance();
+	var categories = video.categories;
+	var category = categories.next();
+	while (category.done !== true){
+
+		var butEle = document.createElement("button");
+		butEle.setAttribute("class","list-group-item list-group-item-action text-center btn");
+		butEle.setAttribute("value",category.value.name);
+		var textB = document.createTextNode(category.value.name);
+		butEle.appendChild(textB);
+		
+		divList.appendChild(butEle);
+		
+		butEle.addEventListener("click",showProductionsC);
+
+		category = categories.next();
+	}
+
+	var divCatd = document.createElement("div");
+	divCatd.setAttribute("style","width:80%;");
+	divCatd.setAttribute("class","d-flex flex-column align-items-center border boder-secondary");
+
+	var prodDes = document.createElement("h5");
+	prodDes.setAttribute("class","text-center mb-3");
+	var textP = document.createTextNode("Producciones destacadas");
+	prodDes.appendChild(textP);
+
+	var div1 = document.createElement("div");
+	div1.setAttribute("class","carousel slide mb-5");
+	div1.setAttribute("data-ride","carousel");
+	div1.setAttribute("style","width:50%")
+
+	var div2 = document.createElement("div");
+	div2.setAttribute("class","carousel-inner");
+
+	divCatd.appendChild(prodDes);
+	divCatd.appendChild(div1);
+	div1.appendChild(div2);
+
+	var productions = video.productions;
+	var production = productions.next();
+	var count = 0;
+	while (production.done !== true){
+
+		if ( count <= 0 ) {
+
+			var div3 = document.createElement("div");
+			div3.setAttribute("class","carousel-item active");
+
+			var imgC = document.createElement("img");
+			imgC.setAttribute("class","d-block w-100");
+			imgC.setAttribute("src","img/"+production.value.title+".jpg");
+			imgC.setAttribute("alt",production.value.title);
+
+			
+			div2.appendChild(div3);
+			div3.appendChild(imgC);
+
+			count = count+1;
+
+		} else {
+
+			var div3 = document.createElement("div");
+			div3.setAttribute("class","carousel-item");
+
+			var imgC = document.createElement("img");
+			imgC.setAttribute("class","d-block w-100");
+			imgC.setAttribute("src","img/"+production.value.title+".jpg");
+			imgC.setAttribute("alt",production.value.title);
+
+			div2.appendChild(div3);
+			div3.appendChild(imgC);
+		}
+	
+		production = productions.next();
+	}
+
+	var closeT = document.createElement("h5");
+	closeT.setAttribute("class","text-center mb-3");
+	var textC = document.createTextNode("Cerrar todas las ventanas abiertas.");
+	closeT.appendChild(textC);
+
+	var brCs = document.createElement ("button");
+	brCs.setAttribute("class","btn btn-secondary btn-lg mb-3");
+	brCs.setAttribute("id","buttonP");
+	brCs.setAttribute("type","button");
+	brCs.setAttribute("value","");
+	var textBCs = document.createTextNode("Cerrar");
+	brCs.appendChild(textBCs);
+
+	brCs.addEventListener("click", closeWindows);
+
+	divCatd.appendChild(closeT);
+	divCatd.appendChild(brCs);
+
+	contentP.appendChild(divCatd);
+}
+
+//Ahora Crearemos una funcion que nos mostrara las categorias
+function showCategories(){
 
 	var show = document.getElementById("Nombre");
 	show.innerHTML = "Categorias";
 
 	var contentP = document.getElementById("principal");
+	contentP.setAttribute("class","row");
 
 	while (contentP.firstChild) {
 	contentP.removeChild(contentP.firstChild);
@@ -248,38 +396,6 @@ function showHomePage(){
 	}
 }
 
-//Funcion que mostrara el menu navegable
-function menuPopulate(){
-
-	var menu = document.getElementById("menu");
-
-	while (menu.firstChild) {
-		menu.removeChild(menu.firstChild);
-		}
-
-	var array = ["Categorias","Producciones","Actores","Directores"];
-	var arrayHref = [showHomePage,showProductions,showActors,ShowDirectors];
-
-	var ul = document.createElement("ul");
-	ul.setAttribute("class","nav nav-tabs");
-
-	for (var cont=0 ; cont< 4; cont++) {
-		
-		var li = document.createElement("li");
-		li.setAttribute("class","nav-item btn");
-		var a = document.createElement("a");
-		a.setAttribute("class","nav-link");
-		li.addEventListener("click",arrayHref[cont]);
-		var text = document.createTextNode(array[cont]);
-		a.appendChild(text);
-
-		menu.appendChild(ul);
-		ul.appendChild(li);
-		li.appendChild(a);
-	}
-
-}
-
 //Funcion que mostrara las producciones a partir de una categoria.
 function showProductionsC(){
 	
@@ -288,6 +404,7 @@ function showProductionsC(){
 	show.innerHTML = "Producciones de "+cat;
 
 	var contentP = document.getElementById("principal");
+	contentP.setAttribute("class","row");
 
 	while (contentP.firstChild) {
 	contentP.removeChild(contentP.firstChild);
@@ -353,13 +470,12 @@ function showProductionsC(){
 
 //Funcion que mostrara las producciones desde el menu
 function showProductions(){
-
-	menuPopulate();
 	
 	var show = document.getElementById("Nombre");
 	show.innerHTML = "Producciones";
 
 	var contentP = document.getElementById("principal");
+	contentP.setAttribute("class","row");
 
 	while (contentP.firstChild) {
 	contentP.removeChild(contentP.firstChild);
@@ -416,6 +532,7 @@ function showActors(){
 	show.innerHTML = "Actores";
 
 	var contentP = document.getElementById("principal");
+	contentP.setAttribute("class","row");
 
 	while (contentP.firstChild) {
 	contentP.removeChild(contentP.firstChild);
@@ -470,6 +587,7 @@ function ShowDirectors() {
 	show.innerHTML = "Directores";
 
 	var contentP = document.getElementById("principal");
+	contentP.setAttribute("class","row");
 
 	while (contentP.firstChild) {
 	contentP.removeChild(contentP.firstChild);
@@ -841,19 +959,6 @@ function showProductionAlone(){
 
 				br.addEventListener("click", openWindows);
 
-				//BOTON PRUEBA CERRAR
-				var brp = document.createElement ("button");
-				brp.setAttribute("class","btn btn-default btn-sm mb-1");
-				brp.setAttribute("id","buttonP");
-				brp.setAttribute("type","button");
-				brp.setAttribute("value",production.value.title);
-				var textBp = document.createTextNode("Prueba");
-				brp.appendChild(textBp);
-
-				info.appendChild(brp);
-
-				brp.addEventListener("click", closeWindows);
-
 			}else{
 
 				var titleR = document.createElement("h6");
@@ -1010,9 +1115,9 @@ function openWindows() {
 function closeWindows() {
 	
 	var index = 0;
-	console.log("entra al close");
+
 	if (!arrayWindows.length !== 0) {
-		console.log("entra al if");
+		
 		while ( index < arrayWindows.length) {
 			console.log("entra al while");
 			arrayWindows[index].close();
@@ -1150,8 +1255,8 @@ function showResource() {
 
 //Funcion que invoca todas las funciones necesarias.
 function init(){
-	menuPopulate();
 	initPopulate();
+	menuPopulate();
 	showHomePage();
 }
 
